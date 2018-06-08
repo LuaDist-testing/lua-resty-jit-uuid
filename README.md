@@ -72,8 +72,14 @@ http {
 **Note**: when generating v4 (random) UUIDs in ngx_lua, it is **very
 important** that you seed this module in the `init_worker` phase. If you do
 not, your workers will generate identical UUID sequences, which could lead to
-serious issues in your application. The seeding requirement also applies in uses
-outside of ngx_lua, though seeding is less delicate in such cases.
+serious issues in your application. The seeding requirement also applies in
+uses outside of ngx_lua, although seeding is less delicate in such cases.
+Additionally, you should be weary about the usage of the
+[`lua_code_cache`](https://github.com/openresty/lua-nginx-module#lua_code_cache)
+directive: if Lua code cache is disabled, all sequences of UUIDs generated
+during subsequent requests will be identical, unless this module is seeded for
+every request. Just like disabling Lua code cache, such behavior would be
+considered an ngx_lua anti-pattern and you should avoid it.
 
 [Back to TOC](#table-of-contents)
 
@@ -162,4 +168,4 @@ Work licensed under the MIT License.
 [badge-coveralls-url]: https://coveralls.io/r/thibaultcha/lua-resty-jit-uuid?branch=master
 [badge-coveralls-image]: https://coveralls.io/repos/thibaultcha/lua-resty-jit-uuid/badge.svg?branch=master&style=flat
 
-[badge-version-image]: https://img.shields.io/badge/version-0.0.6-blue.svg?style=flat
+[badge-version-image]: https://img.shields.io/badge/version-0.0.7-blue.svg?style=flat

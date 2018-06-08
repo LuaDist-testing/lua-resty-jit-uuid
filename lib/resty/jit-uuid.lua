@@ -5,7 +5,7 @@
 -- @module jit-uuid
 -- @author Thibault Charbonnier
 -- @license MIT
--- @release 0.0.6
+-- @release 0.0.7
 
 
 local bit = require 'bit'
@@ -17,7 +17,7 @@ local bor = bit.bor
 
 
 local _M = {
-    _VERSION = '0.0.6'
+    _VERSION = '0.0.7'
 }
 
 
@@ -274,13 +274,14 @@ do
             end
 
             assert(i == 16, "invalid binary namespace buffer length")
+            local ns = concat(buf)
 
             return function(name)
                 if type(name) ~= 'string' then
                     return nil, 'name must be a string'
                 end
 
-                local hash, ver, var = hash_fn(concat(buf, ''), name)
+                local hash, ver, var = hash_fn(ns, name)
 
                 return (fmt('%s-%s-%s%s-%s%s-%s', sub(hash, 1, 8),
                                                 sub(hash, 9, 12),

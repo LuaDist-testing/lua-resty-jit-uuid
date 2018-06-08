@@ -3,7 +3,7 @@
 -- @module jit-uuid
 -- @author Thibault Charbonnier
 -- @license MIT
--- @release 0.0.3
+-- @release 0.0.5
 
 local bit = require 'bit'
 local tohex = bit.tohex
@@ -11,7 +11,7 @@ local band = bit.band
 local bor = bit.bor
 
 local _M = {
-  _VERSION = '0.0.4'
+  _VERSION = '0.0.5'
 }
 
 ----------
@@ -27,6 +27,10 @@ local _M = {
 -- the Lua pseudo-random generator (with `math.randomseed`).
 -- You are free to seed it any way you want, but this function
 -- can do it for you if you'd like, with some added guarantees.
+--
+-- @param[type=number] seed (Optional) A seed to use. If none given, will
+-- generate one trying to use the most appropriate technique.
+-- @treturn number `seed`: the seed given to `math.randomseed`.
 -- @usage
 -- local uuid = require 'resty.jit-uuid'
 -- uuid.seed()
@@ -36,14 +40,18 @@ local _M = {
 --   local uuid = require 'resty.jit-uuid'
 --   uuid.seed()
 -- }
-function _M.seed()
-  if ngx then
-    math.randomseed(ngx.time() + ngx.worker.pid())
-  elseif package.loaded['socket'] and package.loaded['socket'].gettime then
-    math.randomseed(package.loaded['socket'].gettime()*10000)
-  else
-    math.randomseed(os.time())
+function _M.seed(seed)
+  if not seed then
+    if ngx then
+      seed = ngx.time() + ngx.worker.pid()
+    elseif package.loaded['socket'] and package.loaded['socket'].gettime then
+      seed = package.loaded['socket'].gettime()*10000
+    else
+      seed = os.time()
+    end
   end
+  math.randomseed(seed)
+  return seed
 end
 
 -------------
@@ -184,10 +192,9 @@ do
       end
     end
 
-    --- Generate a v3 UUID factory.
+    --- Instanciate a v3 UUID factory.
     -- @function factory_v3
     -- Creates a closure generating namespaced v3 UUIDs.
-    --
     -- @param[type=string] namespace (must be a valid UUID according to `is_valid`)
     -- @treturn function `factory`: a v3 UUID generator.
     -- @treturn string `err`: a string describing an error
@@ -216,17 +223,16 @@ do
       end
     end
 
-    --- Generate a v5 UUID factory.
+    --- Instanciate a v5 UUID factory.
     -- @function factory_v5
     -- Creates a closure generating namespaced v5 UUIDs.
-    --
     -- @param[type=string] namespace (must be a valid UUID according to `is_valid`)
     -- @treturn function `factory`: a v5 UUID generator.
     -- @treturn string `err`: a string describing an error
     -- @usage
     -- local uuid = require 'resty.jit-uuid'
     --
-    -- local fact = assert(uuid.factory_v3('e6ebd542-06ae-11e6-8e82-bba81706b27d'))
+    -- local fact = assert(uuid.factory_v5('e6ebd542-06ae-11e6-8e82-bba81706b27d'))
     --
     -- local u1 = fact('hello')
     -- ---> 4850816f-1658-5890-8bfd-1ed14251f1f0

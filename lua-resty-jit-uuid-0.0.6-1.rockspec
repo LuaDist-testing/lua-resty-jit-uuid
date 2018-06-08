@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "lua-resty-jit-uuid"
-version = "0.0.5-1"
+version = "0.0.6-1"
 -- LuaDist source
 source = {
-  tag = "0.0.5-1",
+  tag = "0.0.6-1",
   url = "git://github.com/LuaDist-testing/lua-resty-jit-uuid.git"
 }
 -- Original source
 -- source = {
---   url = "git://github.com/thibaultCha/lua-resty-jit-uuid",
---   tag = "0.0.5"
+--   url = "git://github.com/thibaultcha/lua-resty-jit-uuid",
+--   tag = "0.0.6"
 -- }
 description = {
   summary = "Fast and dependency-free uuid generation for OpenResty/LuaJIT",
